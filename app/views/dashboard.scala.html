@@ -1,0 +1,47 @@
+@(dashboardInfo: models.DashBoard)
+
+@main("DashboardInfo") {
+	
+<br> <div id="dashboardSection"  class="dashboardSection">
+			<label> Total Summary </label>
+			<br/> 
+			<br/> 
+    		<div class="tableContainer">
+				<div class="tableRow">
+					<div class="tableColumnHeader"> Products </div>
+					<div class="tableColumnHeader"> Customers </div>
+					<div class="tableColumnHeader"> Orders </div>
+			
+				</div>
+		
+				<div class="tableRow">
+					<div class="tableColumn" id="productsCount">@dashboardInfo.getProductsCount()</div>
+					<div class="tableColumn" id="customersCount">@dashboardInfo.getCustomersCount()</div>
+					<div class="tableColumn" id="ordersCount">@dashboardInfo.getOrdersCount()</div>
+				</div>
+		
+			</div>
+
+			<label>Order per Customer Summary </label> 
+			<br/>
+			<br/> 
+			<div class="tableContainer" id="orderPerCustomerTable">
+				<div class="tableRow">
+					<div class="tableColumnHeader"> Customer EmailID </div>
+					<div class="tableColumnHeader"> OrdersCount </div>
+			
+				</div>
+				
+				@for((key,value) <- dashboardInfo.getOrdersPerCustomer()) {
+					<div class="tableRow" name='customerOrderEntries'> 
+						<div class='tableColumn'> @key</div>
+						<div class='tableColumn'> @value	</div>
+					</div>
+				}
+			
+				
+			</div> 
+    	
+    	</div> </br> 	
+	
+}
