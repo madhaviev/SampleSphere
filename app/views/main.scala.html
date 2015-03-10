@@ -1,0 +1,63 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="@routes.Assets.at("javascripts/jquery-1.11.1.js")" type="text/javascript"></script>
+    </head>
+    <body>
+    	<div id="header"> Sample Sphere Application</div>
+    	<div id="nav">
+			<div>
+				<ul>
+					<li><a href="/home">Home</a>
+					<li><a href id="dashboard">Dashboard</a></li>
+				</ul>
+			</div>
+		</div>
+    	
+    	<div id="homeSection"  class="homeSection">@content</div>
+    	
+ 		<!-- Dashboard section display the table of details -->
+    	<div id="dashboardSection" style="display:none" class="dashboardSection">
+			
+			Total Summary <br/><br/>
+    		<div class="tableContainer">
+				<div class="tableRow">
+					<div class="tableColumnHeader"> Products </div>
+					<div class="tableColumnHeader"> Customers </div>
+					<div class="tableColumnHeader"> Orders </div>
+			
+				</div>
+		
+				<div class="tableRow">
+					<div class="tableColumn" id="productsCount"></div>
+					<div class="tableColumn" id="customersCount"></div>
+					<div class="tableColumn" id="ordersCount"></div>
+				</div>
+		
+			</div> <!-- End of Table container --> 
+			<br/>
+			Order per Customer Summary <br/> <br/>
+			
+			<div class="tableContainer" id="orderPerCustomerTable">
+				<div class="tableRow">
+					<div class="tableColumnHeader"> Customer EmailID </div>
+					<div class="tableColumnHeader"> OrdersCount </div>
+			
+				</div>
+		
+				
+			</div> <!-- End of Table container --> 
+    	
+    	</div> 
+    	
+    	
+    	<div id="footer"></div>
+    </body>
+    <script src="@routes.Assets.at("javascripts/dashboard.js")" type="text/javascript"></script>
+</html>
