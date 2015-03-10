@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import models.DashBoard;
+
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Optional;
@@ -22,7 +24,6 @@ import io.sphere.client.shop.model.Order;
 import io.sphere.client.shop.model.Product;
 import play.libs.Json;
 import play.mvc.Result;
-import scala.Array;
 import sphere.CustomerService;
 import sphere.SearchRequest;
 import sphere.ShopController;
@@ -40,51 +41,38 @@ public class DashboardController extends ShopController {
 
 	/**
 	 * Method to get the products counts, customers count, orders count 
-	 * and number of orders per customers details.
-	 * Returns the json data of all the above details on ajax request. 
+	 * and number of orders per customers details. 
 	 * 
 	 */
 	public static Result dashboard() {
 		
 		//Fetch the product details 
 		SearchRequest<Product> productsSearchRequest = sphere().products().all();
-		SearchResult<Product> productsResult = productsSearchRequest.fetch();
+		int productsCount = productsSearchRequest.fetch().getTotal();
 
 		//Fetch all the customer details
 		SphereClient client = Sphere.getInstance().client();
 		// TODO: How to get the count without fetching all the customers. Did
 		// not find in the documentation.
 		QueryRequest<Customer> all = client.customers().query();
-		QueryResult<Customer> customerFetch = all.fetch();
+		int customerCount = all.fetch().getTotal();
 
 		//Fetch all the order details
 		sphere.QueryRequest<Order> ordersSearchReq = sphere().orders().query();
 		List<Order> ordersList = ordersSearchReq.fetch().getResults();
 
-		//Create a json object to fill all the required details for dashboard
-		ObjectNode json = Json.newObject();
+		DashBoard dashboardInfo = new DashBoard();
+		
+		dashboardInfo.setProductsCount(productsCount);
+		dashboardInfo.setCustomersCount(customerCount);
+		dashboardInfo.setOrdersCount(ordersList.size());
+	
 
-		json.put("productsCount", productsResult.getCount());
-		json.put("customersCount", customerFetch.getCount());
-		json.put("ordersCount", ordersList.size());
+		Map<String, Integer> ordersPerCustomerMap = groupByCustomerCount(ordersList);
 
-		//Set the response type to application/json
-		response().setContentType("application/json");
-
-		Map<String, Integer> map = groupByCustomerCount(ordersList);
-
-		Set<Entry<String, Integer>> entrySet = map.entrySet();
-
-		//Add the array node to json object to fill the orders per customer detail
-		ArrayNode ordersPerCustomerDetails = json.putArray("ordersPerCustomer");
-
-		for (Entry<String, Integer> entry : entrySet) {
-			ObjectNode jsonArr = Json.newObject();
-			jsonArr.put(entry.getKey(), entry.getValue());
-			ordersPerCustomerDetails.add(jsonArr);
-		}
-
-		return ok(json);
+		dashboardInfo.setOrdersPerCustomer(ordersPerCustomerMap);
+		
+		return ok(dashboard.render(dashboardInfo));
 	}
 
 	/**
@@ -96,8 +84,6 @@ public class DashboardController extends ShopController {
 			List<Order> ordersList) {
 
 		Map<String, Integer> map = new HashMap<String, Integer>();
-
-		// Assert.assertNotNull(ordersList);
 
 		for (Order o : ordersList) {
 			Customer customer = Sphere.getInstance().client().customers()

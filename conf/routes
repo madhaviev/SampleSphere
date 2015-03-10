@@ -2,6 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+GET 	/home							controllers.HomePageController.home()
 # Home page
 GET     /                               controllers.HomePageController.home()
  
@@ -9,10 +10,9 @@ GET     /                               controllers.HomePageController.home()
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 
-GET 	/home							controllers.HomePageController.home()
+
 #Router to display dashboard details
 GET		/dashboard					    controllers.DashboardController.dashboard()
 
 #Routers to create test customer, customer login, create carts for the customers and place order samples.
-GET		/createOrderForc1				controllers.TestDataController.createOrderCustomer1()
-GET		/createOrderForc2			    controllers.TestDataController.createOrderCustomer2()
+GET		/createOrder					controllers.TestDataController.createOrder()

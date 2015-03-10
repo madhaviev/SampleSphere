@@ -29,31 +29,36 @@ import sphere.Sphere;
 import views.html.*;
 
 /**
- * Create a test data for the sphere application. 
- * Involves methods for doing customer logins, creating carts , 
- * adding products and place an order
+ * Create a test data for the sphere application. Involves methods for doing
+ * customer logins, creating carts , adding products and place an order
  *
  */
 public class TestDataController extends ShopController {
 
-	public static Result createOrderCustomer1() {
+	public static Result createOrder() {
+
+		Address address = createAddress("xxx", "yyy", "1234");
+
+		createOrderForCustomer("c1.sphere@gmail.com", "password123", address);
+
+		address = createAddress("aaa", "bbb", "3432");
+
+		createOrderForCustomer("c2.sphere@gmail.com", "password123", address);
+
+		return ok();
+	}
+
+	private static void createOrderForCustomer(String email, String password, Address address) {
 		// Logout any existing customer logins
 		sphere().logout();
 
 		// Perform a login
 		if (!sphere().isLoggedIn()) {
-			boolean loginStatus = sphere().login("c1.sphere@gmail.com",
-					"password123");
+			boolean loginStatus = sphere().login(email, password);
 		}
 
 		// Create / Get an existing cart
 		CurrentCart currentCart = sphere().currentCart();
-
-		// Add Shipping address details to the cart
-		Address address = new Address(CountryCode.DE);
-		address.setBuilding("SchwanthalerStr.143");
-		address.setCity("Munich");
-		address.setPostalCode("80339");
 
 		currentCart.setShippingAddress(address);
 
@@ -69,46 +74,15 @@ public class TestDataController extends ShopController {
 		// Perform logout for the customer
 		sphere().logout();
 
-		return ok(index.render("Your order - " + order.getTotalQuantity()
-				+ " Total Price - " + order.getTotalPrice()));
-
 	}
 
-	public static Result createOrderCustomer2() {
+	private static Address createAddress(String building, String city, String postalCode) {
 
-		// Logout any existing customer logins
-		sphere().logout();
-
-		// Perform a login
-		if (!sphere().isLoggedIn()) {
-			boolean loginStatus = sphere().login("c2.sphere@gmail.com",
-					"password123");
-		}
-
-		// Create / Get an existing cart
-		CurrentCart currentCart = sphere().currentCart();
-
-		// Add Shipping address details to the cart
 		Address address = new Address(CountryCode.DE);
-		address.setBuilding("Theresienhohe 13");
-		address.setCity("Munich");
-		address.setPostalCode("80339");
+		address.setBuilding(building);
+		address.setCity(city);
+		address.setPostalCode(postalCode);
 
-		currentCart.setShippingAddress(address);
-
-		// Retrieve existing products and add to the cart
-		List<Product> productsList = sphere().products().all().fetch()
-				.getResults();
-		currentCart.addLineItem(productsList.get(2).getId(), 3);
-		// currentCart.addLineItem(productsList.get(1).getId(), 1);
-
-		// Place an order
-		Order order = currentCart.createOrder(PaymentState.Paid);
-
-		// Perform logout for the customer
-		sphere().logout();
-
-		return ok(index.render("Your order - " + order.getTotalQuantity()
-				+ " Total Price - " + order.getTotalPrice()));
+		return address;
 	}
 }
