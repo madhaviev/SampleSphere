@@ -1,11 +1,18 @@
+import io.sphere.client.shop.model.Order;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import controllers.DashboardController;
+
 import org.junit.*;
 
+import play.Logger;
 import play.mvc.*;
 import play.test.*;
 import play.data.DynamicForm;
@@ -14,7 +21,6 @@ import play.data.validation.Constraints.RequiredValidator;
 import play.i18n.Lang;
 import play.libs.F;
 import play.libs.F.*;
-
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
 
@@ -39,6 +45,11 @@ public class ApplicationTest {
         assertThat(contentType(html)).isEqualTo("text/html");
         assertThat(contentAsString(html)).contains("Your new application is ready.");
     }
-
-
+    
+    @Test 
+    public void badRoute() {
+    	Result result = routeAndCall(fakeRequest(GET, "/home2"));
+    	assertThat(result).isNull();
+    }
+  
 }
